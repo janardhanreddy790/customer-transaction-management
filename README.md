@@ -1,22 +1,94 @@
-# Read Me First
-The following was discovered as part of building this project:
+# Customer Transaction Management
 
-* The original package name 'com.nagam.poc.customer-transaction-management' is invalid and this project uses 'com.nagam.poc.customer_transaction_management' instead.
+## Overview
 
-# Getting Started
+This project is a Spring Boot application that manages customer transactions with authentication and role-based access control.
 
-### Reference Documentation
-For further reference, please consider the following sections:
+## Author
+- **Janardhan Reddy Nagam**
+    - GitHub: [GitHub Profile](https://github.com/janardhanreddy790)
+    - Under this profile you can find more POC´s or Projects.
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.3.1/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.3.1/maven-plugin/reference/html/#build-image)
-* [Jersey](https://docs.spring.io/spring-boot/docs/3.3.1/reference/htmlsingle/index.html#web.servlet.jersey)
+## Prerequisites
 
-### Maven Parent overrides
+- Java 17
+- Maven
+- PostgreSQL
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+## Setup
 
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/customer-transaction-management.git
+    cd customer-transaction-management
+    ```
+
+2. Configure the database in `src/main/resources/application.properties`:
+    ```properties
+    spring.datasource.url=jdbc:postgresql://localhost:5432/yourdbname
+    spring.datasource.username=yourusername
+    spring.datasource.password=yourpassword
+
+    spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+    spring.jpa.hibernate.ddl-auto=update
+    ```
+
+3. Build the project:
+    ```bash
+    mvn clean install
+    ```
+
+4. Run the application:
+    ```bash
+    mvn spring-boot:run
+    ```
+
+## API Endpoints
+
+### Authentication
+
+#### 1. Sign Up
+
+**Endpoint:** `POST /api/auth/signup`
+
+**Request Body:**
+```json
+{
+  "username": "janardhan",
+  "email":"janardhan@gmail.com",
+  "password": "password123",
+  "role": ["mod", "user"]
+}
+```
+**Response Body:**
+```
+{
+  "message": "User registered successfully!"
+}
+```
+
+#### 2. Sign In
+
+**Endpoint:** `POST /api/auth/signin`
+
+**Request Body:**
+```json
+{
+  "username": "janardhan",
+  "password": "password123"
+}
+```
+**Response Body:**
+```
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5hcmRoYW4iLCJpYXQiOjE3MjEwNTIyNzEsImV4cCI6MTcyMTEzODY3MX0.-4aD4oUHHugRZj05sCoRL4zEmUf9hjFBdOBSOVP0XVY",
+    "type": "Bearer",
+    "id": 1,
+    "username": "janardhan",
+    "email": "janardhan@gmail.com",
+    "roles": [
+        "ROLE_MODERATOR",
+        "ROLE_USER"
+    ]
+}
+```
