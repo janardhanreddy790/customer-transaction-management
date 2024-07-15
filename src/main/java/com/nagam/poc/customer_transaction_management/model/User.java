@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Model class to represent User entity.
+ */
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
@@ -18,7 +21,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor
-@AllArgsConstructor  // Keep the existing all-args constructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,11 +41,19 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    // Constructor with username, email, password, and roles
+    /**
+     * Constructor to initialize User with username, email, password, and roles.
+     *
+     * @param username Username
+     * @param email    Email address
+     * @param password Password
+     * @param roles    Set of roles assigned to the user
+     */
     public User(String username, String email, String password, Set<Role> roles) {
         this.username = username;
         this.email = email;

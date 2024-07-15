@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for handling authentication (signin and signup) requests.
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -35,37 +38,58 @@ public class AuthController {
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
 
+    /**
+     * Authenticate user based on login credentials and return JWT token.
+     *
+     * @param loginRequest LoginRequest object containing username and password
+     * @return ResponseEntity containing JwtResponse with JWT token and user details
+     */
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        // Authenticate user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Generate JWT token
         String jwt = jwtUtils.generateJwtToken(authentication);
 
+        // Get UserDetails from authentication
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        // Create JwtResponse object with all required arguments
+        // Create JwtResponse object with JWT token and user details
         JwtResponse jwtResponse = new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
                 userDetails.getEmail(), roles);
 
         return ResponseEntity.ok(jwtResponse);
     }
 
+    /**
+     * Register a new user with the given signup details.
+     *
+     * @param signUpRequest SignupRequest object containing username, email, password, and roles
+     * @return ResponseEntity containing MessageResponse indicating successful registration or error message
+     */
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        // Check if username is already taken
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
 
+        // Check if email is already in use
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()), new HashSet<>());
+        // Create new user account
+        User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()), new HashSet<>());
+
+        // Set roles for the user based on signup request
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 

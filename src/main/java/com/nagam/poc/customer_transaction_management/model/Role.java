@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Model class to represent user roles.
+ */
 @Entity
 @Table(name = "roles")
 @Data

@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO class to represent JWT response.
+ */
 @Data
 @AllArgsConstructor
 public class JwtResponse {
@@ -15,7 +18,15 @@ public class JwtResponse {
     private String email;
     private List<String> roles;
 
-    // Constructor explicitly setting 'type' to "Bearer"
+    /**
+     * Constructor to initialize JwtResponse with token, id, username, email, and roles.
+     *
+     * @param token    JWT token
+     * @param id       User ID
+     * @param username Username
+     * @param email    Email address
+     * @param roles    List of user roles
+     */
     public JwtResponse(String token, Long id, String username, String email, List<String> roles) {
         this.token = token;
         this.type = "Bearer"; // Set the type explicitly

@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.Set;
 
+/**
+ * DTO class to represent signup request.
+ */
 @Data
 public class SignupRequest {
     @NotBlank
